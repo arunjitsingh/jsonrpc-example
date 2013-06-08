@@ -43,9 +43,10 @@ function JsonRpcProvider() {
       transformResponse.push(function(data) {
         return data['id'] == id ? data['result'] || data['error'] : null;
       });
-      if (config && angular.isArray(config['transformResponse'])) {
-        transformResponse.push.apply(
-            transformResponse, config['transformResponse']);
+
+      config = config || {};
+      if (angular.isArray(config['transformResponse'])) {
+        [].push.apply(transformResponse, config['transformResponse']);
       }
       config['transformResponse'] = transformResponse;
 

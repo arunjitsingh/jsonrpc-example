@@ -6,22 +6,18 @@ import (
 )
 
 const (
-	allowedCORSOrigin   = "*"
+	allowedCORSOrigins  = "*"
 	allowedCORSHeaders  = "X-Requested-With,Content-Type"
 	LocationServiceName = "locationsvc"
 )
 
 // HTTP response wrapper
-type ResponseWriter struct {
+type responseWriter struct {
 	status int
 	http.ResponseWriter
 }
 
-func NewResponseWriter(w http.ResponseWriter) *ResponseWriter {
-	return &ResponseWriter{0, w}
-}
-
-func (w *ResponseWriter) WriteHeader(status int) {
+func (w *responseWriter) WriteHeader(status int) {
 	w.status = status
 	w.ResponseWriter.WriteHeader(status)
 }
@@ -40,9 +36,9 @@ func (s *Server) SetHandler(h http.Handler) {
 }
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	rw := NewResponseWriter(w)
-	w.Header().Set("Access-Control-Allow-Origin", allowedCORSOrigin)
-	w.Header().Set("Access-Control-Allow-Headers", allowedCORSHeaders)
+	rw := &responseWriter{http.StatusOK, w} // OK unless error
+	rw.Header().Set("Access-Control-Allow-Origin", allowedCORSOrigins)
+	rw.Header().Set("Access-Control-Allow-Headers", allowedCORSHeaders)
 	s.handler.ServeHTTP(rw, r)
 	log.Printf("%s %s %d\n", r.Method, r.URL.Path, rw.status)
 }
