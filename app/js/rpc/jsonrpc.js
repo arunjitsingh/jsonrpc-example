@@ -1,5 +1,5 @@
 /**
- * @fileoverview ...
+ * @fileoverview JSON-RPC service.
  *
  * @author arunjitsingh
  */
@@ -7,6 +7,8 @@
 
 /**
  * Provides and configures the jsonrpc service.
+ *
+ * TODO(arunjitsingh): Make this more like $resource.
  */
 function JsonRpcProvider() {
   var defaults = this.defaults = {};

@@ -1,11 +1,11 @@
 /**
- * @fileoverview ...
+ * @fileoverview Main.
  *
  * @author arunjitsingh
  */
 'use strict';
 
-// goog.inherits
+/**! https://code.google.com/p/closure-library/source/browse/closure/goog/base.js */
 function inherits(childCtor, parentCtor) {
   /** @constructor */
   function tempCtor() {};
@@ -14,8 +14,6 @@ function inherits(childCtor, parentCtor) {
   /** @override */
   childCtor.prototype.constructor = childCtor;
 };
-
-angular.module('rpc', []).provider('jsonrpc', JsonRpcProvider);
 
 angular.module('main', ['rpc']).
     config(['jsonrpcProvider', function(jsonrpcProvider) {
