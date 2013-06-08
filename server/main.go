@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/gorilla/rpc"
-	jsonrpc "github.com/gorilla/rpc/json"
+	rpc "github.com/gorilla/rpc/v2"
+	jsonrpc "github.com/gorilla/rpc/v2/json2"
 )
 
 // flags

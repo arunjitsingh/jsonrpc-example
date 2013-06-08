@@ -37,7 +37,7 @@ function JsonRpcProvider() {
         'method': options.method,
         'id': id
       };
-      angular.isDefined(options.data) && (payload['params'] = [options.data]);
+      angular.isDefined(options.data) && (payload['params'] = options.data);
 
       var transformResponse = $http.defaults.transformResponse;
       transformResponse.push(function(data) {
