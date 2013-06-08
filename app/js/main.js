@@ -19,7 +19,7 @@ angular.module('rpc', []).provider('jsonrpc', JsonRpcProvider);
 
 angular.module('main', ['rpc']).
     config(['jsonrpcProvider', function(jsonrpcProvider) {
-      jsonrpcProvider.defaults.rpcBasePath = 'http://localhost:8000/rpc';
+      jsonrpcProvider.setBasePath('http://localhost:8000/rpc');
     }]).
     service('locationService', LocationService).
     controller('MainCtrl', MainCtrl);
@@ -47,7 +47,7 @@ RpcService.prototype.serviceMethod = function(name) {
   var jsonrpc = this.jsonrpc;
   var method = this.serviceName + "." + name;
   return function(data) {
-    return jsonrpc.send(method, data);
+    return jsonrpc.request(method, data);
   }
 }
 

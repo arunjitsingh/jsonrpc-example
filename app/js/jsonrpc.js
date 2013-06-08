@@ -5,9 +5,12 @@
  */
 'use strict';
 
+/**
+ * Provides and configures the jsonrpc service.
+ */
 function JsonRpcProvider() {
   var defaults = this.defaults = {};
-  defaults.rpcBasePath = '/rpc';
+  defaults.rpcPath_ = '/rpc';
 
   function generateId() {
     /**! http://stackoverflow.com/a/2117523/377392 */
@@ -18,25 +21,65 @@ function JsonRpcProvider() {
   }
 
   this.$get = ['$http', function($http) {
-    function jsonrpc() {}
-
-    jsonrpc.send = function(method, params) {
+    /**
+     * Makes a JSON-RPC request to |method| with |data|.
+     *
+     * @param {{path:string=, method: string, data:*)}} options Call options.
+     * @param {angular.HttpConfig} config HTTP config.
+     * @return {angular.HttpPromise}
+     */
+    function jsonrpc(options, config) {
       var id = generateId();
+      var payload = {
+        'jsonrpc': '2.0',
+        'method': options.method,
+        'id': id
+      };
+      angular.isDefined(options.data) && (payload['params'] = [options.data]);
+
       var transformResponse = $http.defaults.transformResponse;
       transformResponse.push(function(data) {
         return data['id'] == id ? data['result'] || data['error'] : null;
       });
-      return $http.post(defaults.rpcBasePath, {
-        'method': method,
-        'params': [params],
-        'id': id
-      }, {
-        'transformResponse': transformResponse
-      });
+      if (config && angular.isArray(config['transformResponse'])) {
+        transformResponse.push.apply(
+            transformResponse, config['transformResponse']);
+      }
+      config['transformResponse'] = transformResponse;
+
+      return $http.post(options.path || defaults.rpcPath_, payload, config);
+    }
+
+    /**
+     * Shorthand for making a request with the default path.
+     *
+     * @param {string} method The method to call.
+     * @param {?*} data The data for the call.
+     * @param {angular.HttpConfig} config HTTP config.
+     * @return {angular.HttpPromise}
+     */
+    jsonrpc.request = function(method, data, config) {
+      return jsonrpc({method: method, data: data}, config);
     };
 
-    jsonrpc.defaults = defaults;
+    /**
+     * Shorthand for making a request with a path.
+     *
+     * @param {string} path The call path.
+     * @param {string} method The method to call.
+     * @param {?*} data The data for the call.
+     * @param {angular.HttpConfig} config HTTP config.
+     * @return {angular.HttpPromise}
+     */
+    jsonrpc.requestPath = function(path, method, data, config) {
+      return jsonrpc({path: path, method: method, data: data}, config);
+    };
 
     return jsonrpc;
   }];
+}
+
+/** Set the base path for JSON-RPC calls to |path|. */
+JsonRpcProvider.prototype.setBasePath = function(path) {
+  this.defaults.rpcPath_ = path;
 }
