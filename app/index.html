@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>JSON-RPC using AngularJS</title>
+  </head>
+  <body>
+    <div ng-app="main" ng-controller="MainCtrl">
+      <div ng-repeat="p in data.points">
+        <pre>({{p.lat}}, {{p.long}})</pre>
+      </div>
+    </div>
+    <script src="components/angular/angular.js"></script>
+    <script src="js/jsonrpc.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>
